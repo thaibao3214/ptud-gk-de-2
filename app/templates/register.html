@@ -3,14 +3,15 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center">Register</h2>
-    <form method="POST" action="" enctype="multipart/form-data" class="card p-4 shadow">
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Đăng ký tài khoản</h2>
+    <form method="POST" action="" enctype="multipart/form-data" class="card p-4 shadow-sm w-50 mx-auto bg-light">
         {{ form.hidden_tag() }}
 
+        <!-- Username Field -->
         <div class="mb-3">
             {{ form.username.label(class="form-label") }}
-            {{ form.username(class="form-control") }}
+            {{ form.username(class="form-control", placeholder="Nhập tên đăng nhập") }}
             {% if form.username.errors %}
                 <div class="text-danger">
                     {% for error in form.username.errors %}
@@ -20,9 +21,10 @@
             {% endif %}
         </div>
 
+        <!-- Password Field -->
         <div class="mb-3">
             {{ form.password.label(class="form-label") }}
-            {{ form.password(class="form-control") }}
+            {{ form.password(class="form-control", placeholder="Nhập mật khẩu") }}
             {% if form.password.errors %}
                 <div class="text-danger">
                     {% for error in form.password.errors %}
@@ -32,9 +34,10 @@
             {% endif %}
         </div>
 
+        <!-- Confirm Password Field -->
         <div class="mb-3">
             {{ form.confirm_password.label(class="form-label") }}
-            {{ form.confirm_password(class="form-control") }}
+            {{ form.confirm_password(class="form-control", placeholder="Nhập lại mật khẩu") }}
             {% if form.confirm_password.errors %}
                 <div class="text-danger">
                     {% for error in form.confirm_password.errors %}
@@ -44,9 +47,10 @@
             {% endif %}
         </div>
 
+        <!-- Avatar Upload Field -->
         <div class="mb-3">
             {{ form.avatar.label(class="form-label") }}
-            {{ form.avatar(class="form-control") }}
+            {{ form.avatar(class="form-control", accept="image/*") }}
             {% if form.avatar.errors %}
                 <div class="text-danger">
                     {% for error in form.avatar.errors %}
@@ -56,9 +60,15 @@
             {% endif %}
         </div>
 
+        <!-- Submit Button -->
         <div class="d-grid">
-            {{ form.submit(class="btn btn-primary") }}
+            {{ form.submit(class="btn btn-primary btn-block") }}
         </div>
     </form>
+
+    <!-- Optional Links -->
+    <div class="text-center mt-3">
+        <p>Đã có tài khoản? <a href="{{ url_for('main.login') }}">Đăng nhập ngay</a></p>
+    </div>
 </div>
 {% endblock %}

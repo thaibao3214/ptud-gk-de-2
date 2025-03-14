@@ -1,63 +1,58 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Edit Post{% endblock %}
 
 {% block content %}
-<h2>Quản lý Users</h2>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Role</th>
-        <th>Trạng thái</th>
-        <th>Actions</th>
-    </tr>
-    {% for user in users %}
-    <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.role }}</td>
-        <td>
-            {% if user.is_active %} Hoạt động {% else %} Bị khóa {% endif %}
-        </td>
-        <td>
-            {% if user.role != 'admin' %}
-                <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Xóa</button>
-                </form>
-                {% if user.is_active %}
-                    <form action="{{ url_for('admin.lock_user', user_id=user.id) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-warning">Khóa</button>
-                    </form>
-                {% else %}
-                    <form action="{{ url_for('admin.unlock_user', user_id=user.id) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-success">Mở khóa</button>
-                    </form>
-                {% endif %}
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Chỉnh sửa bài viết</h2>
 
-<h2>Quản lý Bài viết</h2>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Tiêu đề</th>
-        <th>Tác giả</th>
-        <th>Actions</th>
-    </tr>
-    {% for post in posts %}
-    <tr>
-        <td>{{ post.id }}</td>
-        <td>{{ post.title }}</td>
-        <td>{{ post.user.username }}</td>
-        <td>
-            <form action="{{ url_for('admin.delete_post_admin', post_id=post.id) }}" method="POST">
-                <button type="submit" class="btn btn-danger">Xóa</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+    <form action="{{ url_for('main.edit_post', post_id=post.id) }}" method="POST" enctype="multipart/form-data">
+        <!-- CSRF token để bảo mật -->
+        {{ form.hidden_tag() }}
+
+        <div class="form-group mb-3">
+            <label for="title">Tiêu đề bài viết:</label>
+            <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                class="form-control" 
+                value="{{ post.title }}" 
+                placeholder="Nhập tiêu đề" 
+                required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="content">Nội dung:</label>
+            <textarea 
+                id="content" 
+                name="content" 
+                class="form-control" 
+                rows="10" 
+                placeholder="Nhập nội dung bài viết" 
+                required>{{ post.content }}</textarea>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="image">Hình ảnh (nếu cần):</label>
+            <input 
+                type="file" 
+                id="image" 
+                name="image" 
+                class="form-control">
+            {% if post.image %}
+            <div class="mt-2">
+                <p>Hình ảnh hiện tại:</p>
+                <img src="{{ url_for('static', filename='uploads/' + post.image) }}" alt="Current Image" class="img-thumbnail" width="200">
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save"></i> Lưu thay đổi
+        </button>
+        <a href="{{ url_for('main.posts') }}" class="btn btn-secondary">
+            <i class="fa fa-times"></i> Hủy bỏ
+        </a>
+    </form>
+</div>
 {% endblock %}

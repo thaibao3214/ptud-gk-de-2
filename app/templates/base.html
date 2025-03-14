@@ -3,33 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern web application for managing tasks, posts, and user profiles.">
+    <meta name="author" content="MyApp Team">
+    <meta name="keywords" content="tasks, posts, profile management, web application">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>{% block title %}Home{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Navigation Bar -->
     <nav class="navbar">
-        {% if current_user.is_authenticated %}
-            <div class="user-info">
-                <img src="{{ url_for('static', filename='uploads/' + (current_user.avatar or 'default.jpg')) }}" 
-                     alt="Avatar" class="avatar">
-                <span>Welcome, 
-                    <a href="{{ url_for('main.profile') }}">{{ current_user.username }}</a>!
-                </span>
+        <div class="navbar-container">
+            <!-- Brand Logo -->
+            <div class="brand-logo">
+                <a href="{{ url_for('main.home') }}">MyApp</a>
             </div>
-            <a href="{{ url_for('main.tasks') }}">Tasks</a>
-            <a href="{{ url_for('main.posts') }}">Posts</a>
-            {% if current_user.role == 'admin' %}
-                <a href="{{ url_for('admin.admin_dashboard') }}">Admin Panel</a>
-            {% endif %}
-            <a href="{{ url_for('main.logout') }}" class="logout-btn">Logout</a>
-        {% else %}
-            <a href="{{ url_for('main.register') }}">Register</a>
-            <a href="{{ url_for('main.login') }}">Login</a>
-        {% endif %}
+            
+            <!-- Mobile Menu Toggle -->
+            <div class="menu-toggle" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                {% if current_user.is_authenticated %}
+                    <li>
+                        <a href="{{ url_for('main.profile') }}">
+                            <img src="{{ url_for('static', filename='uploads/' + (current_user.avatar or 'default.jpg')) }}" alt="Avatar" class="avatar">
+                            Welcome, {{ current_user.username }}
+                        </a>
+                    </li>
+                    <li><a href="{{ url_for('main.tasks') }}">Tasks</a></li>
+                    <li><a href="{{ url_for('main.posts') }}">Posts</a></li>
+                    {% if current_user.role == 'admin' %}
+                        <li><a href="{{ url_for('admin.admin_dashboard') }}">Admin Panel</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('main.logout') }}" class="logout-btn">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('main.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('main.login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
     
+    <!-- Main Content -->
     <div class="container">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; {{ current_year }} MyApp. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Responsive Menu -->
+    <script>
+        // Toggle menu for mobile view
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>

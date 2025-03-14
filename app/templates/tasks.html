@@ -1,45 +1,61 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-3">Your Tasks</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Quản lý Công Việc</h2>
     
-    <!-- Task Form -->
-    <form method="POST" class="mb-4">
-        {{ form.hidden_tag() }}
-        <div class="mb-3">
-            {{ form.title.label(class="form-label") }}
-            {{ form.title(class="form-control", placeholder="Enter task title") }}
-        </div>
-        <div class="mb-3">
-            {{ form.description.label(class="form-label") }}
-            {{ form.description(class="form-control", placeholder="Enter task description") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Add Task</button>
-    </form>
+    <!-- Form Thêm Công Việc -->
+    <div class="card p-4 mb-4 shadow-sm bg-light">
+        <h3 class="mb-3">Thêm Công Việc</h3>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control", placeholder="Nhập tiêu đề công việc") }}
+            </div>
+            <div class="mb-3">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control", placeholder="Nhập mô tả công việc") }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-plus"></i> Thêm Công Việc
+            </button>
+        </form>
+    </div>
     
-    <!-- Task List -->
-    <ul class="list-group">
+    <!-- Danh Sách Công Việc -->
+    <h3 class="mb-3">Danh Sách Công Việc</h3>
+    <div class="row">
         {% for task in tasks %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <strong>{{ task.title }}</strong>
-                <p class="mb-0 text-muted">{{ task.description }}</p>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ task.title }}</h5>
+                    <p class="card-text text-muted">{{ task.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <form action="{{ url_for('main.toggle_task', task_id=task.id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm {% if task.completed %}btn-success{% else %}btn-secondary{% endif %}">
+                                {% if task.completed %}✔ Hoàn Thành{% else %}Chưa Hoàn Thành{% endif %}
+                            </button>
+                        </form>
+                        {% if current_user.id == task.user_id or current_user.is_admin %}
+                            <a href="{{ url_for('main.edit_task', task_id=task.id) }}" class="btn btn-warning btn-sm">
+                                <i class="fa fa-edit"></i> Sửa
+                            </a>
+                            <form action="{{ url_for('main.delete_task', task_id=task.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa công việc này?');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Xóa
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div>
-                <form action="{{ url_for('main.toggle_task', task_id=task.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-sm {% if task.completed %}btn-success{% else %}btn-secondary{% endif %}">
-                        {% if task.completed %}✔ Completed{% else %}Mark as Done{% endif %}
-                    </button>
-                </form>
-                {% if current_user.id == task.user_id or current_user.is_admin %}
-                    <a href="{{ url_for('main.edit_task', task_id=task.id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ url_for('main.delete_task', task_id=task.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                {% endif %}
-            </div>
-        </li>
+        </div>
+        {% else %}
+        <div class="col-12 text-center text-muted">
+            <p>Chưa có công việc nào.</p>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 </div>
 {% endblock %}

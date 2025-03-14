@@ -2,46 +2,65 @@
 {% block title %}Posts{% endblock %}
 
 {% block content %}
-<h2>Posts</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Danh sách Bài viết</h2>
 
-<!-- Form tạo bài viết -->
-<form method="POST" class="mb-4" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-        {{ form.title.label(class="form-label") }}
-        {{ form.title(class="form-control") }}
+    <!-- Form Tạo Bài Viết -->
+    <div class="card p-4 mb-4 shadow-sm bg-light">
+        <h3 class="mb-3">Tạo bài viết mới</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control", placeholder="Nhập tiêu đề bài viết") }}
+            </div>
+            <div class="mb-3">
+                {{ form.content.label(class="form-label") }}
+                {{ form.content(class="form-control", placeholder="Nhập nội dung bài viết") }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-plus"></i> Tạo bài viết
+            </button>
+        </form>
     </div>
-    <div class="mb-3">
-        {{ form.content.label(class="form-label") }}
-        {{ form.content(class="form-control") }}
-    </div>
-    <button type="submit" class="btn btn-primary">Create Post</button>
-</form>
 
-<!-- Danh sách bài viết -->
-<ul class="list-group">
-    {% for post in posts %}
-        <li class="list-group-item d-flex align-items-center">
-            <!-- Kiểm tra nếu user có avatar, nếu không thì dùng default.jpg -->
-            {% set avatar = post.user.avatar if post.user.avatar else 'default.jpg' %}
-            <img src="{{ url_for('static', filename='uploads/' + avatar) }}" 
-                 alt="Avatar" class="rounded-circle me-3" width="50" height="50">
-            <div>
-                <strong>{{ post.title }}</strong>  
-                <p class="mb-1">{{ post.content }}</p>
-                <small class="text-muted">
-                    By {{ post.user.username }} - {{ post.date_created.strftime('%Y-%m-%d %H:%M') }}
-                </small>
+    <!-- Danh Sách Bài Viết -->
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <!-- Avatar -->
+                        {% set avatar = post.user.avatar if post.user.avatar else 'default.jpg' %}
+                        <img src="{{ url_for('static', filename='uploads/' + avatar) }}" 
+                             alt="Avatar" class="rounded-circle me-3" width="50" height="50">
+                        <h5 class="mb-0">{{ post.title }}</h5>
+                    </div>
+                    <p class="card-text text-muted">{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
+                    <small class="text-muted">
+                        Được viết bởi <strong>{{ post.user.username }}</strong> vào {{ post.date_created.strftime('%Y-%m-%d %H:%M') }}
+                    </small>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-between">
+                    {% if current_user.id == post.user_id or current_user.is_admin %}
+                        <a href="{{ url_for('main.edit_post', post_id=post.id) }}" class="btn btn-warning btn-sm">
+                            <i class="fa fa-edit"></i> Chỉnh sửa
+                        </a>
+                        <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?');">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i> Xóa
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
-            <div class="ms-auto">
-                {% if current_user.id == post.user_id or current_user.is_admin %}
-                    <a href="{{ url_for('main.edit_post', post_id=post.id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="POST" class="d-inline">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</button>
-                    </form>
-                {% endif %}
-            </div>
-        </li>
-    {% endfor %}
-</ul>
+        </div>
+        {% else %}
+        <div class="col-12 text-center text-muted">
+            <p>Chưa có bài viết nào.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

@@ -1,10 +1,35 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
+
 {% block content %}
-<form method="POST" action="">
-    {{ form.hidden_tag() }}
-    {{ form.username.label }} {{ form.username() }}
-    {{ form.password.label }} {{ form.password() }}
-    {{ form.submit() }}
-</form>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Đăng nhập</h2>
+    <form method="POST" action="" class="w-50 mx-auto shadow p-4 rounded bg-light">
+        {{ form.hidden_tag() }}
+        
+        <!-- Username Field -->
+        <div class="form-group mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control", placeholder="Nhập tên đăng nhập") }}
+        </div>
+        
+        <!-- Password Field -->
+        <div class="form-group mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control", placeholder="Nhập mật khẩu") }}
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="text-center">
+            {{ form.submit(class="btn btn-primary w-100") }}
+        </div>
+    </form>
+    
+    <!-- Optional Links -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('main.register') }}">Chưa có tài khoản? Đăng ký ngay</a>
+        <br>
+        <a href="{{ url_for('main.reset_password') }}">Quên mật khẩu?</a>
+    </div>
+</div>
 {% endblock %}
