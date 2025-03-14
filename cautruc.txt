@@ -1,0 +1,33 @@
+project/
+├── app/
+│   ├── __init__.py
+│   ├── models.py
+│   ├── forms.py
+│   ├── routes.py
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── login.html
+│   │   ├── register.html
+|   |   ├── admin.html
+|   |   ├── profile.html
+|   |   ├── tasks.html
+|   |   ├── posts.html
+|   |   ├── edit_post.html
+│   └── static/
+│       ├── styles.css
+|       ├── uploads/
+└── run.py
+venv\Scripts\activate 
+
+flask db init
+flask db migrate -m "Initial migration."
+flask db upgrade
+
+from app import db
+from app.models import User
+
+admin = User(username="admin", role="admin")
+admin.set_password("baole123")
+db.session.add(admin)
+db.session.commit()
+pip install pillow
